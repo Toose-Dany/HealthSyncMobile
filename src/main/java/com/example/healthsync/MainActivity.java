@@ -663,7 +663,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             startActivity(new Intent(this, HistoryActivity.class));
         } else if (id == R.id.nav_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
-        }
+        }  else if (id == R.id.nav_logout) {
+        prefs.edit().putBoolean("isLoggedIn", false).clear().apply();
+        startActivity(new Intent(this, LoginActivity.class));
+        finish();
+    }
 
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
