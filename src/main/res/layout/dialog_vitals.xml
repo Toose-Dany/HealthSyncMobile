@@ -10,6 +10,7 @@
         android:layout_height="wrap_content"
         android:text="Пульс (уд/мин)"
         android:textSize="14sp"
+        android:textColor="#333333"
         android:layout_marginBottom="8dp" />
 
     <EditText
@@ -17,6 +18,8 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:inputType="number"
+        android:textColor="#000000"
+        android:textColorHint="#888888"
         android:hint="68"
         android:padding="12dp"
         android:background="@android:drawable/editbox_background"
@@ -27,6 +30,7 @@
         android:layout_height="wrap_content"
         android:text="Давление (сист/диаст)"
         android:textSize="14sp"
+        android:textColor="#333333"
         android:layout_marginBottom="8dp" />
 
     <EditText
@@ -34,6 +38,8 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:inputType="text"
+        android:textColor="#000000"
+        android:textColorHint="#888888"
         android:hint="118/75"
         android:padding="12dp"
         android:background="@android:drawable/editbox_background" />

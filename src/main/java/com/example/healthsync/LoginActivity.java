@@ -57,9 +57,13 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        // Простая проверка (в реальном приложении - проверка в БД)
+        // Получаем сохраненные данные
         String savedEmail = prefs.getString("userEmail", "");
         String savedPassword = prefs.getString("userPassword", "");
+
+        // Для отладки - показываем что сохранено
+        android.util.Log.d("LOGIN", "Введено: " + email + "/" + password);
+        android.util.Log.d("LOGIN", "Сохранено: " + savedEmail + "/" + savedPassword);
 
         if (email.equals(savedEmail) && password.equals(savedPassword)) {
             prefs.edit().putBoolean("isLoggedIn", true).apply();

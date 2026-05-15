@@ -83,7 +83,7 @@
                             android:layout_weight="1"
                             android:text="Рост:"
                             android:textSize="14sp"
-                            android:textColor="#666666" />
+                            android:textColor="#333333" />
 
                         <TextView
                             android:id="@+id/profileHeightText"
@@ -108,7 +108,7 @@
                             android:layout_weight="1"
                             android:text="Вес:"
                             android:textSize="14sp"
-                            android:textColor="#666666" />
+                            android:textColor="#333333" />
 
                         <TextView
                             android:id="@+id/profileWeightText"
@@ -133,7 +133,7 @@
                             android:layout_weight="1"
                             android:text="ИМТ:"
                             android:textSize="14sp"
-                            android:textColor="#666666" />
+                            android:textColor="#333333" />
 
                         <TextView
                             android:id="@+id/profileBMIText"
@@ -194,7 +194,7 @@
                             android:layout_weight="1"
                             android:text="👣 Всего шагов:"
                             android:textSize="14sp"
-                            android:textColor="#666666" />
+                            android:textColor="#333333" />
 
                         <TextView
                             android:id="@+id/totalStepsText"
@@ -219,7 +219,7 @@
                             android:layout_weight="1"
                             android:text="💧 Всего воды:"
                             android:textSize="14sp"
-                            android:textColor="#666666" />
+                            android:textColor="#333333" />
 
                         <TextView
                             android:id="@+id/totalWaterText"
@@ -244,7 +244,7 @@
                             android:layout_weight="1"
                             android:text="😴 Всего сна:"
                             android:textSize="14sp"
-                            android:textColor="#666666" />
+                            android:textColor="#333333" />
 
                         <TextView
                             android:id="@+id/totalSleepText"
@@ -269,7 +269,7 @@
                             android:layout_weight="1"
                             android:text="🪙 SyncCoin:"
                             android:textSize="14sp"
-                            android:textColor="#666666" />
+                            android:textColor="#333333" />
 
                         <TextView
                             android:id="@+id/totalCoinsText"
@@ -294,7 +294,7 @@
                             android:layout_weight="1"
                             android:text="📅 Дней активных:"
                             android:textSize="14sp"
-                            android:textColor="#666666" />
+                            android:textColor="#333333" />
 
                         <TextView
                             android:id="@+id/daysActiveText"
@@ -318,7 +318,7 @@
                             android:layout_weight="1"
                             android:text="🏆 Достижений:"
                             android:textSize="14sp"
-                            android:textColor="#666666" />
+                            android:textColor="#333333" />
 
                         <TextView
                             android:id="@+id/achievementsCountText"
@@ -329,6 +329,31 @@
                             android:textSize="14sp"
                             android:textStyle="bold"
                             android:textColor="#9C27B0" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="12dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="🔥 Всего калорий:"
+                            android:textSize="14sp"
+                            android:textColor="#333333" />
+
+                        <TextView
+                            android:id="@+id/totalCaloriesText"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="0 ккал"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:textColor="#FF5722" />
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>

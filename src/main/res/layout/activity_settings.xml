@@ -52,7 +52,7 @@
                         android:layout_height="wrap_content"
                         android:text="👣 Шаги в день:"
                         android:textSize="14sp"
-                        android:textColor="#666666"
+                        android:textColor="#333333"
                         android:layout_marginBottom="8dp" />
 
                     <EditText
@@ -60,6 +60,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
                         android:inputType="number"
+                        android:textColor="#000000"
+                        android:textColorHint="#888888"
                         android:hint="10000"
                         android:padding="12dp"
                         android:background="@android:drawable/editbox_background"
@@ -70,7 +72,7 @@
                         android:layout_height="wrap_content"
                         android:text="💧 Вода (мл):"
                         android:textSize="14sp"
-                        android:textColor="#666666"
+                        android:textColor="#333333"
                         android:layout_marginBottom="8dp" />
 
                     <EditText
@@ -78,6 +80,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
                         android:inputType="number"
+                        android:textColor="#000000"
+                        android:textColorHint="#888888"
                         android:hint="2000"
                         android:padding="12dp"
                         android:background="@android:drawable/editbox_background"
@@ -88,15 +92,39 @@
                         android:layout_height="wrap_content"
                         android:text="😴 Сон (часов):"
                         android:textSize="14sp"
-                        android:textColor="#666666"
+                        android:textColor="#333333"
                         android:layout_marginBottom="8dp" />
+
+
 
                     <EditText
                         android:id="@+id/sleepGoalEdit"
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
                         android:inputType="numberDecimal"
+                        android:textColor="#000000"
+                        android:textColorHint="#888888"
                         android:hint="8"
+                        android:padding="12dp"
+                        android:background="@android:drawable/editbox_background" />
+
+                    <!-- Калории -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🔥 Калории в день:"
+                        android:textSize="14sp"
+                        android:textColor="#333333"
+                        android:layout_marginBottom="8dp" />
+
+                    <EditText
+                        android:id="@+id/caloriesGoalEdit"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:inputType="number"
+                        android:hint="2000"
+                        android:textColor="#000000"
+                        android:textColorHint="#888888"
                         android:padding="12dp"
                         android:background="@android:drawable/editbox_background" />
 

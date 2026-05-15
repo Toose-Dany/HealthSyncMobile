@@ -79,13 +79,20 @@ public class RegisterActivity extends AppCompatActivity {
 
         // Сохраняем рост и вес, если указаны
         if (!heightStr.isEmpty()) {
-            editor.putFloat("height", Float.parseFloat(heightStr));
+            try {
+                editor.putFloat("height", Float.parseFloat(heightStr));
+            } catch (NumberFormatException e) {}
         }
         if (!weightStr.isEmpty()) {
-            editor.putFloat("weight", Float.parseFloat(weightStr));
+            try {
+                editor.putFloat("weight", Float.parseFloat(weightStr));
+            } catch (NumberFormatException e) {}
         }
 
         editor.apply();
+
+        // Для отладки
+        android.util.Log.d("REGISTER", "Сохранено: " + email + "/" + password);
 
         Toast.makeText(this, "Регистрация успешна!", Toast.LENGTH_SHORT).show();
         startActivity(new Intent(this, MainActivity.class));

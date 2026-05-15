@@ -42,11 +42,13 @@ public class HistoryActivity extends AppCompatActivity {
             int steps = prefs.getInt("steps_" + date, 0);
             int water = prefs.getInt("water_" + date, 0);
             float sleep = prefs.getFloat("sleep_" + date, 0);
+            int calories = prefs.getInt("calories_" + date, 0);
 
             sb.append("📅 ").append(date).append("\n");
             sb.append("   👣 Шаги: ").append(steps).append("\n");
             sb.append("   💧 Вода: ").append(water).append(" мл\n");
-            sb.append("   😴 Сон: ").append(sleep).append(" ч\n\n");
+            sb.append("   😴 Сон: ").append(sleep).append(" ч\n");
+            sb.append("   🔥 Калории: ").append(calories).append(" ккал\n\n");
 
             cal.add(Calendar.DAY_OF_YEAR, -1);
         }

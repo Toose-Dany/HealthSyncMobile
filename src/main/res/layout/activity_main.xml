@@ -53,7 +53,7 @@
                             android:layout_weight="1"
                             android:text="SyncCoin"
                             android:textSize="16sp"
-                            android:textColor="#666666" />
+                            android:textColor="#333333" />
 
                         <TextView
                             android:id="@+id/syncCoinText"
@@ -86,7 +86,7 @@
                             android:layout_height="wrap_content"
                             android:text="ЛИЧНЫЕ ДАННЫЕ"
                             android:textSize="12sp"
-                            android:textColor="#666666"
+                            android:textColor="#333333"
                             android:layout_marginBottom="12dp" />
 
                         <LinearLayout
@@ -105,7 +105,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="Рост"
                                     android:textSize="12sp"
-                                    android:textColor="#666666" />
+                                    android:textColor="#333333" />
 
                                 <LinearLayout
                                     android:layout_width="wrap_content"
@@ -126,7 +126,7 @@
                                         android:layout_height="wrap_content"
                                         android:text=" см"
                                         android:textSize="12sp"
-                                        android:textColor="#666666"
+                                        android:textColor="#333333"
                                         android:layout_gravity="bottom" />
                                 </LinearLayout>
                             </LinearLayout>
@@ -142,7 +142,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="Вес"
                                     android:textSize="12sp"
-                                    android:textColor="#666666" />
+                                    android:textColor="#333333" />
 
                                 <LinearLayout
                                     android:layout_width="wrap_content"
@@ -163,7 +163,7 @@
                                         android:layout_height="wrap_content"
                                         android:text=" кг"
                                         android:textSize="12sp"
-                                        android:textColor="#666666"
+                                        android:textColor="#333333"
                                         android:layout_gravity="bottom" />
                                 </LinearLayout>
                             </LinearLayout>
@@ -180,7 +180,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="ИМТ:"
                                 android:textSize="14sp"
-                                android:textColor="#666666"
+                                android:textColor="#333333"
                                 android:layout_marginRight="8dp" />
 
                             <TextView
@@ -223,7 +223,7 @@
                             android:layout_height="wrap_content"
                             android:text="СЕРДЦЕ"
                             android:textSize="12sp"
-                            android:textColor="#666666"
+                            android:textColor="#333333"
                             android:layout_marginBottom="12dp" />
 
                         <LinearLayout
@@ -242,7 +242,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="❤️ Пульс"
                                     android:textSize="12sp"
-                                    android:textColor="#666666" />
+                                    android:textColor="#333333" />
 
                                 <TextView
                                     android:id="@+id/heartRateText"
@@ -258,7 +258,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="уд/мин"
                                     android:textSize="11sp"
-                                    android:textColor="#666666" />
+                                    android:textColor="#333333" />
                             </LinearLayout>
 
                             <LinearLayout
@@ -272,7 +272,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="🫀 Давление"
                                     android:textSize="12sp"
-                                    android:textColor="#666666" />
+                                    android:textColor="#333333" />
 
                                 <TextView
                                     android:id="@+id/bloodPressureText"
@@ -297,86 +297,7 @@
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
-                <!-- Сон Карточка -->
-                <androidx.cardview.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:cardCornerRadius="12dp"
-                    android:layout_marginBottom="12dp"
-                    app:cardElevation="2dp">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="16dp"
-                        android:background="@android:color/white">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="СОН"
-                            android:textSize="12sp"
-                            android:textColor="#666666"
-                            android:layout_marginBottom="12dp" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:orientation="vertical">
-
-                                <TextView
-                                    android:id="@+id/sleepHoursText"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="7.5"
-                                    android:textSize="24sp"
-                                    android:textStyle="bold"
-                                    android:textColor="#000000" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="часов"
-                                    android:textSize="11sp"
-                                    android:textColor="#666666" />
-                            </LinearLayout>
-
-                            <androidx.cardview.widget.CardView
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                app:cardCornerRadius="25dp"
-                                android:background="#E1F5FE">
-
-                                <TextView
-                                    android:id="@+id/sleepScoreText"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:text="82"
-                                    android:textSize="18sp"
-                                    android:textStyle="bold"
-                                    android:textColor="#0288D1"
-                                    android:gravity="center" />
-                            </androidx.cardview.widget.CardView>
-                        </LinearLayout>
-
-                        <Button
-                            android:id="@+id/logSleepButton"
-                            android:layout_width="match_parent"
-                            android:layout_height="40dp"
-                            android:text="😴 Записать сон"
-                            android:textSize="12sp"
-                            android:layout_marginTop="12dp"
-                            android:backgroundTint="#E1F5FE"
-                            android:textColor="#0277BD" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
 
                 <!-- График активности -->
                 <LinearLayout
@@ -434,6 +355,16 @@
                                 android:textSize="14sp"
                                 android:backgroundTint="#5C6BC0"
                                 android:textColor="@android:color/white" />
+
+                            <Button
+                                android:id="@+id/chartCaloriesBtn"
+                                android:layout_width="50dp"
+                                android:layout_height="30dp"
+                                android:text="🔥"
+                                android:textSize="14sp"
+                                android:backgroundTint="#FF5722"
+                                android:textColor="@android:color/white"
+                                android:layout_marginRight="4dp" />
                         </LinearLayout>
                     </LinearLayout>
 
@@ -528,7 +459,7 @@
                                     android:text="ПН"
                                     android:gravity="center"
                                     android:textSize="10sp"
-                                    android:textColor="#666666" />
+                                    android:textColor="#333333" />
 
                                 <TextView
                                     android:layout_width="0dp"
@@ -537,7 +468,7 @@
                                     android:text="ВТ"
                                     android:gravity="center"
                                     android:textSize="10sp"
-                                    android:textColor="#666666" />
+                                    android:textColor="#333333" />
 
                                 <TextView
                                     android:layout_width="0dp"
@@ -546,7 +477,7 @@
                                     android:text="СР"
                                     android:gravity="center"
                                     android:textSize="10sp"
-                                    android:textColor="#666666" />
+                                    android:textColor="#333333" />
 
                                 <TextView
                                     android:layout_width="0dp"
@@ -555,7 +486,7 @@
                                     android:text="ЧТ"
                                     android:gravity="center"
                                     android:textSize="10sp"
-                                    android:textColor="#666666" />
+                                    android:textColor="#333333" />
 
                                 <TextView
                                     android:layout_width="0dp"
@@ -564,7 +495,7 @@
                                     android:text="ПТ"
                                     android:gravity="center"
                                     android:textSize="10sp"
-                                    android:textColor="#666666" />
+                                    android:textColor="#333333" />
 
                                 <TextView
                                     android:layout_width="0dp"
@@ -573,7 +504,7 @@
                                     android:text="СБ"
                                     android:gravity="center"
                                     android:textSize="10sp"
-                                    android:textColor="#666666" />
+                                    android:textColor="#333333" />
 
                                 <TextView
                                     android:layout_width="0dp"
@@ -582,7 +513,7 @@
                                     android:text="ВС"
                                     android:gravity="center"
                                     android:textSize="10sp"
-                                    android:textColor="#666666" />
+                                    android:textColor="#333333" />
                             </LinearLayout>
                         </LinearLayout>
                     </androidx.cardview.widget.CardView>
@@ -695,17 +626,31 @@
                         android:gravity="center" />
 
                     <Button
-                        android:id="@+id/quickPressureButton"
+                        android:id="@+id/quickSleepButton"
+                        android:layout_width="0dp"
+                        android:layout_height="80dp"
+                        android:layout_weight="1"
+                        android:layout_marginLeft="6dp"
+                        android:backgroundTint="#EDE7F6"
+                        android:textColor="#5C6BC0"
+                        android:text="😴\nСон\n+1 ч"
+                        android:textSize="12sp"
+                        android:gravity="center" />
+
+                    <Button
+                        android:id="@+id/quickCaloriesButton"
                         android:layout_width="0dp"
                         android:layout_height="80dp"
                         android:layout_weight="1"
                         android:layout_marginLeft="6dp"
                         android:backgroundTint="#FFEBEE"
-                        android:textColor="#F44336"
-                        android:text="🫀\nДавление\nИзмерить"
+                        android:textColor="#FF5722"
+                        android:text="🔥\nКалории\n+100"
                         android:textSize="12sp"
                         android:gravity="center" />
                 </LinearLayout>
+
+
 
                 <!-- Цели на сегодня -->
                 <TextView
@@ -764,7 +709,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="0/2000 мл"
                                     android:textSize="11sp"
-                                    android:textColor="#666666" />
+                                    android:textColor="#333333" />
                             </LinearLayout>
 
                             <ProgressBar
@@ -778,15 +723,29 @@
                                 android:layout_marginTop="4dp" />
                         </LinearLayout>
 
+                        <!-- Карандаш - ручной ввод -->
                         <Button
-                            android:id="@+id/addWaterGoalButton"
-                            android:layout_width="60dp"
-                            android:layout_height="28dp"
-                            android:text="+250 мл"
-                            android:textSize="10sp"
-                            android:backgroundTint="#2196F3"
+                            android:id="@+id/editWaterButton"
+                            android:layout_width="48dp"
+                            android:layout_height="32dp"
+                            android:text="✏️"
+                            android:textSize="18sp"
+                            android:backgroundTint="#FF9800"
                             android:textColor="@android:color/white"
-                            android:layout_marginLeft="8dp" />
+                            android:layout_marginLeft="4dp"
+                            android:padding="0dp" />
+
+                        <!-- Стрелка - откат -->
+                        <Button
+                            android:id="@+id/undoWaterButton"
+                            android:layout_width="48dp"
+                            android:layout_height="32dp"
+                            android:text="↩️"
+                            android:textSize="18sp"
+                            android:backgroundTint="#9E9E9E"
+                            android:textColor="@android:color/white"
+                            android:layout_marginLeft="4dp"
+                            android:padding="0dp" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
@@ -837,7 +796,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="0/10000"
                                     android:textSize="11sp"
-                                    android:textColor="#666666" />
+                                    android:textColor="#333333" />
                             </LinearLayout>
 
                             <ProgressBar
@@ -851,15 +810,29 @@
                                 android:layout_marginTop="4dp" />
                         </LinearLayout>
 
+                        <!-- Карандаш - ручной ввод -->
                         <Button
-                            android:id="@+id/addStepsGoalButton"
-                            android:layout_width="60dp"
-                            android:layout_height="28dp"
-                            android:text="+500"
-                            android:textSize="10sp"
+                            android:id="@+id/editStepsButton"
+                            android:layout_width="48dp"
+                            android:layout_height="32dp"
+                            android:text="✏️"
+                            android:textSize="18sp"
                             android:backgroundTint="#FF9800"
                             android:textColor="@android:color/white"
-                            android:layout_marginLeft="8dp" />
+                            android:layout_marginLeft="4dp"
+                            android:padding="0dp" />
+
+                        <!-- Стрелка - откат -->
+                        <Button
+                            android:id="@+id/undoStepsButton"
+                            android:layout_width="48dp"
+                            android:layout_height="32dp"
+                            android:text="↩️"
+                            android:textSize="18sp"
+                            android:backgroundTint="#9E9E9E"
+                            android:textColor="@android:color/white"
+                            android:layout_marginLeft="4dp"
+                            android:padding="0dp" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
@@ -910,7 +883,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="0/8 ч"
                                     android:textSize="11sp"
-                                    android:textColor="#666666" />
+                                    android:textColor="#333333" />
                             </LinearLayout>
 
                             <ProgressBar
@@ -924,15 +897,116 @@
                                 android:layout_marginTop="4dp" />
                         </LinearLayout>
 
+                        <!-- Карандаш - ручной ввод -->
                         <Button
-                            android:id="@+id/addSleepGoalButton"
-                            android:layout_width="60dp"
-                            android:layout_height="28dp"
-                            android:text="+1 ч"
-                            android:textSize="10sp"
+                            android:id="@+id/editSleepButton"
+                            android:layout_width="48dp"
+                            android:layout_height="32dp"
+                            android:text="✏️"
+                            android:textSize="18sp"
                             android:backgroundTint="#5C6BC0"
                             android:textColor="@android:color/white"
-                            android:layout_marginLeft="8dp" />
+                            android:layout_marginLeft="4dp"
+                            android:padding="0dp" />
+
+                        <!-- Стрелка - откат -->
+                        <Button
+                            android:id="@+id/undoSleepButton"
+                            android:layout_width="48dp"
+                            android:layout_height="32dp"
+                            android:text="↩️"
+                            android:textSize="18sp"
+                            android:backgroundTint="#9E9E9E"
+                            android:textColor="@android:color/white"
+                            android:layout_marginLeft="4dp"
+                            android:padding="0dp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Калории -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="8dp"
+                    android:layout_marginBottom="16dp"
+                    app:cardElevation="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="12dp"
+                        android:background="@android:color/white">
+
+                        <TextView
+                            android:layout_width="30dp"
+                            android:layout_height="wrap_content"
+                            android:text="🔥"
+                            android:textSize="18sp" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:layout_marginLeft="8dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="Калории"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/caloriesGoalText"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0/2000"
+                                    android:textSize="11sp"
+                                    android:textColor="#333333" />
+                            </LinearLayout>
+
+                            <ProgressBar
+                                android:id="@+id/caloriesProgressBar"
+                                android:layout_width="match_parent"
+                                android:layout_height="4dp"
+                                style="?android:attr/progressBarStyleHorizontal"
+                                android:progress="0"
+                                android:max="100"
+                                android:progressTint="#FF5722"
+                                android:layout_marginTop="4dp" />
+                        </LinearLayout>
+
+                        <!-- Карандаш - ручной ввод -->
+                        <Button
+                            android:id="@+id/editCaloriesButton"
+                            android:layout_width="48dp"
+                            android:layout_height="32dp"
+                            android:text="✏️"
+                            android:textSize="18sp"
+                            android:backgroundTint="#FF5722"
+                            android:textColor="@android:color/white"
+                            android:layout_marginLeft="4dp"
+                            android:padding="0dp" />
+
+                        <!-- Стрелка - откат -->
+                        <Button
+                            android:id="@+id/undoCaloriesButton"
+                            android:layout_width="48dp"
+                            android:layout_height="32dp"
+                            android:text="↩️"
+                            android:textSize="18sp"
+                            android:backgroundTint="#9E9E9E"
+                            android:textColor="@android:color/white"
+                            android:layout_marginLeft="4dp"
+                            android:padding="0dp" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
@@ -976,7 +1050,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="Шаги"
                                     android:textSize="10sp"
-                                    android:textColor="#666666" />
+                                    android:textColor="#333333" />
 
                                 <TextView
                                     android:id="@+id/footerStepsText"
@@ -1013,7 +1087,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="Калории"
                                     android:textSize="10sp"
-                                    android:textColor="#666666" />
+                                    android:textColor="#333333" />
 
                                 <TextView
                                     android:id="@+id/footerCaloriesText"
@@ -1050,7 +1124,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="Вода"
                                     android:textSize="10sp"
-                                    android:textColor="#666666" />
+                                    android:textColor="#333333" />
 
                                 <TextView
                                     android:id="@+id/footerWaterText"
@@ -1087,7 +1161,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="Сон"
                                     android:textSize="10sp"
-                                    android:textColor="#666666" />
+                                    android:textColor="#333333" />
 
                                 <TextView
                                     android:id="@+id/footerSleepText"

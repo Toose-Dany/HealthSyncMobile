@@ -14,7 +14,7 @@ import androidx.appcompat.widget.Toolbar;
 public class ProfileActivity extends AppCompatActivity {
 
     private TextView heightText, weightText, bmiText, bmiCategoryText;
-    private TextView totalStepsText, totalWaterText, totalSleepText, totalCoinsText;
+    private TextView totalStepsText, totalWaterText, totalSleepText, totalCaloriesText, totalCoinsText;
     private TextView daysActiveText, achievementsCountText;
     private Button editProfileButton;
 
@@ -25,6 +25,7 @@ public class ProfileActivity extends AppCompatActivity {
     private int steps = 0;
     private int waterMl = 0;
     private float sleepHours = 0;
+    private int calories = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +52,7 @@ public class ProfileActivity extends AppCompatActivity {
         steps = prefs.getInt("totalSteps", 0);
         waterMl = prefs.getInt("totalWater", 0);
         sleepHours = prefs.getFloat("totalSleep", 0);
+        calories = prefs.getInt("totalCalories", 0);
     }
 
     private void initViews() {
@@ -61,6 +63,7 @@ public class ProfileActivity extends AppCompatActivity {
         totalStepsText = findViewById(R.id.totalStepsText);
         totalWaterText = findViewById(R.id.totalWaterText);
         totalSleepText = findViewById(R.id.totalSleepText);
+        totalCaloriesText = findViewById(R.id.totalCaloriesText);
         totalCoinsText = findViewById(R.id.totalCoinsText);
         daysActiveText = findViewById(R.id.daysActiveText);
         achievementsCountText = findViewById(R.id.achievementsCountText);
@@ -96,6 +99,7 @@ public class ProfileActivity extends AppCompatActivity {
         totalStepsText.setText(String.format("%,d", steps));
         totalWaterText.setText(waterMl + " мл");
         totalSleepText.setText(String.format("%.1f", sleepHours) + " ч");
+        totalCaloriesText.setText(String.format("%,d", calories) + " ккал");
 
         int daysActive = prefs.getInt("daysActive", 1);
         daysActiveText.setText(daysActive + " дней");
@@ -123,7 +127,10 @@ public class ProfileActivity extends AppCompatActivity {
                 if (newHeight > 100 && newHeight < 250 && newWeight > 20 && newWeight < 300) {
                     height = newHeight;
                     weight = newWeight;
-                    prefs.edit().putFloat("height", (float) height).putFloat("weight", (float) weight).apply();
+                    prefs.edit()
+                            .putFloat("height", (float) height)
+                            .putFloat("weight", (float) weight)
+                            .apply();
                     updateUI();
                     Toast.makeText(this, "Профиль обновлен!", Toast.LENGTH_SHORT).show();
                 }

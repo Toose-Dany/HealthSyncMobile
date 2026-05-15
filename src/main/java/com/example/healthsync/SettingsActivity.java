@@ -10,7 +10,7 @@ import androidx.appcompat.widget.Toolbar;
 
 public class SettingsActivity extends AppCompatActivity {
 
-    private EditText stepsGoalEdit, waterGoalEdit, sleepGoalEdit;
+    private EditText stepsGoalEdit, waterGoalEdit, sleepGoalEdit, caloriesGoalEdit;
     private Button saveButton;
     private SharedPreferences prefs;
 
@@ -29,6 +29,7 @@ public class SettingsActivity extends AppCompatActivity {
         stepsGoalEdit = findViewById(R.id.stepsGoalEdit);
         waterGoalEdit = findViewById(R.id.waterGoalEdit);
         sleepGoalEdit = findViewById(R.id.sleepGoalEdit);
+        caloriesGoalEdit = findViewById(R.id.caloriesGoalEdit);
         saveButton = findViewById(R.id.saveSettingsButton);
 
         loadSettings();
@@ -40,6 +41,7 @@ public class SettingsActivity extends AppCompatActivity {
         stepsGoalEdit.setText(String.valueOf(prefs.getInt("stepsGoal", 10000)));
         waterGoalEdit.setText(String.valueOf(prefs.getInt("waterGoal", 2000)));
         sleepGoalEdit.setText(String.valueOf(prefs.getFloat("sleepGoal", 8)));
+        caloriesGoalEdit.setText(String.valueOf(prefs.getInt("caloriesGoal", 2000)));
     }
 
     private void saveSettings() {
@@ -47,11 +49,13 @@ public class SettingsActivity extends AppCompatActivity {
             int stepsGoal = Integer.parseInt(stepsGoalEdit.getText().toString());
             int waterGoal = Integer.parseInt(waterGoalEdit.getText().toString());
             float sleepGoal = Float.parseFloat(sleepGoalEdit.getText().toString());
+            int caloriesGoal = Integer.parseInt(caloriesGoalEdit.getText().toString());
 
             prefs.edit()
                     .putInt("stepsGoal", stepsGoal)
                     .putInt("waterGoal", waterGoal)
                     .putFloat("sleepGoal", sleepGoal)
+                    .putInt("caloriesGoal", caloriesGoal)
                     .apply();
 
             Toast.makeText(this, "Настройки сохранены!", Toast.LENGTH_SHORT).show();

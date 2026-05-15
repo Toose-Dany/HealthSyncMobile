@@ -6,5 +6,5 @@
     <color name="background">#F5F5F5</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
-    <color name="text_secondary">#666666</color>
+    <color name="text_secondary">#333333</color>
 </resources>

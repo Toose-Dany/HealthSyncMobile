@@ -17,6 +17,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.navigation.NavigationView;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -37,26 +38,55 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private float sleepHours = 0;
     private float sleepGoal = 8;
     private int calories = 0;
+    private int caloriesGoal = 2000;
 
     // Данные для графиков
     private int[] weekSteps = {0, 0, 0, 0, 0, 0, 0};
     private int[] weekWater = {0, 0, 0, 0, 0, 0, 0};
     private float[] weekSleep = {0, 0, 0, 0, 0, 0, 0};
+    private int[] weekCalories = {0, 0, 0, 0, 0, 0, 0};
     private String currentChart = "steps";
+
+    // История действий
+    private ArrayList<ActionHistory> history = new ArrayList<>();
+    private static final int MAX_HISTORY = 20;
 
     // UI элементы
     private TextView syncCoinText, heightText, weightText, bmiText, bmiCategoryText;
     private TextView heartRateText, bloodPressureText, sleepHoursText, sleepScoreText;
-    private TextView waterGoalText, stepsGoalText, sleepGoalText;
-    private ProgressBar waterProgressBar, stepsProgressBar, sleepProgressBar;
+    private TextView waterGoalText, stepsGoalText, sleepGoalText, caloriesGoalText;
+    private ProgressBar waterProgressBar, stepsProgressBar, sleepProgressBar, caloriesProgressBar;
     private TextView footerStepsText, footerCaloriesText, footerWaterText, footerSleepText;
     private TextView dailyInsightText, bioAgeText;
     private View[] graphBars;
-    private Button chartStepsBtn, chartWaterBtn, chartSleepBtn;
+    private Button chartStepsBtn, chartWaterBtn, chartSleepBtn, chartCaloriesBtn;
+    private Button editStepsBtn, editWaterBtn, editSleepBtn, editCaloriesBtn;
+    private Button undoStepsBtn, undoWaterBtn, undoSleepBtn, undoCaloriesBtn;
     private SharedPreferences prefs;
     private DrawerLayout drawerLayout;
 
     private Random random = new Random();
+
+    // Класс для хранения истории
+    private static class ActionHistory {
+        String type;
+        int oldSteps;
+        int oldWaterMl;
+        float oldSleepHours;
+        int oldCalories;
+        int oldSyncCoins;
+        int oldCaloriesValue;
+
+        ActionHistory(String type, int oldSteps, int oldWaterMl, float oldSleepHours, int oldCalories, int oldSyncCoins, int oldCaloriesValue) {
+            this.type = type;
+            this.oldSteps = oldSteps;
+            this.oldWaterMl = oldWaterMl;
+            this.oldSleepHours = oldSleepHours;
+            this.oldCalories = oldCalories;
+            this.oldSyncCoins = oldSyncCoins;
+            this.oldCaloriesValue = oldCaloriesValue;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +105,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         updateDailyInsight();
         updateBioAge();
 
-        // Настройка Toolbar и меню
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -91,7 +120,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onResume() {
         super.onResume();
-        // Перезагружаем данные при возврате на главный экран
         loadUserData();
         loadSettings();
         loadAllHistory();
@@ -111,6 +139,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         stepsGoal = prefs.getInt("stepsGoal", 10000);
         waterGoal = prefs.getInt("waterGoal", 2000);
         sleepGoal = prefs.getFloat("sleepGoal", 8);
+        caloriesGoal = prefs.getInt("caloriesGoal", 2000);
     }
 
     private void initViews() {
@@ -126,9 +155,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         waterGoalText = findViewById(R.id.waterGoalText);
         stepsGoalText = findViewById(R.id.stepsGoalText);
         sleepGoalText = findViewById(R.id.sleepGoalText);
+        caloriesGoalText = findViewById(R.id.caloriesGoalText);
         waterProgressBar = findViewById(R.id.waterProgressBar);
         stepsProgressBar = findViewById(R.id.stepsProgressBar);
         sleepProgressBar = findViewById(R.id.sleepProgressBar);
+        caloriesProgressBar = findViewById(R.id.caloriesProgressBar);
         footerStepsText = findViewById(R.id.footerStepsText);
         footerCaloriesText = findViewById(R.id.footerCaloriesText);
         footerWaterText = findViewById(R.id.footerWaterText);
@@ -146,23 +177,44 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         chartStepsBtn = findViewById(R.id.chartStepsBtn);
         chartWaterBtn = findViewById(R.id.chartWaterBtn);
         chartSleepBtn = findViewById(R.id.chartSleepBtn);
+        chartCaloriesBtn = findViewById(R.id.chartCaloriesBtn);
+
+        editStepsBtn = findViewById(R.id.editStepsButton);
+        editWaterBtn = findViewById(R.id.editWaterButton);
+        editSleepBtn = findViewById(R.id.editSleepButton);
+        editCaloriesBtn = findViewById(R.id.editCaloriesButton);
+
+        undoStepsBtn = findViewById(R.id.undoStepsButton);
+        undoWaterBtn = findViewById(R.id.undoWaterButton);
+        undoSleepBtn = findViewById(R.id.undoSleepButton);
+        undoCaloriesBtn = findViewById(R.id.undoCaloriesButton);
     }
 
     private void setupClickListeners() {
+        // Быстрый ввод
         findViewById(R.id.quickStepsButton).setOnClickListener(v -> quickSteps());
         findViewById(R.id.quickWaterButton).setOnClickListener(v -> quickWater());
-        findViewById(R.id.quickPressureButton).setOnClickListener(v -> quickPressure());
+        findViewById(R.id.quickSleepButton).setOnClickListener(v -> quickSleep());
+        findViewById(R.id.quickCaloriesButton).setOnClickListener(v -> quickCalories());
 
-        findViewById(R.id.addStepsGoalButton).setOnClickListener(v -> addSteps());
-        findViewById(R.id.addWaterGoalButton).setOnClickListener(v -> addWater());
-        findViewById(R.id.addSleepGoalButton).setOnClickListener(v -> addSleep());
+        // Ручной ввод
+        editStepsBtn.setOnClickListener(v -> showStepsInputDialog());
+        editWaterBtn.setOnClickListener(v -> showWaterInputDialog());
+        editSleepBtn.setOnClickListener(v -> showSleepInputDialog());
+        editCaloriesBtn.setOnClickListener(v -> showCaloriesInputDialog());
 
-        findViewById(R.id.addVitalsButton).setOnClickListener(v -> addVitals());
-        findViewById(R.id.logSleepButton).setOnClickListener(v -> logSleep());
+        // Откат
+        undoStepsBtn.setOnClickListener(v -> undoSteps());
+        undoWaterBtn.setOnClickListener(v -> undoWater());
+        undoSleepBtn.setOnClickListener(v -> undoSleep());
+        undoCaloriesBtn.setOnClickListener(v -> undoCalories());
+
+        findViewById(R.id.addVitalsButton).setOnClickListener(v -> showPressureInputDialog());
 
         waterGoalText.setOnClickListener(v -> editWaterGoal());
         stepsGoalText.setOnClickListener(v -> editStepsGoal());
         sleepGoalText.setOnClickListener(v -> editSleepGoal());
+        caloriesGoalText.setOnClickListener(v -> editCaloriesGoal());
 
         bmiText.setOnClickListener(v -> showBMIInfo());
         bloodPressureText.setOnClickListener(v -> showBPInfo());
@@ -170,6 +222,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         chartStepsBtn.setOnClickListener(v -> { currentChart = "steps"; updateChart(); highlightChartButton(); });
         chartWaterBtn.setOnClickListener(v -> { currentChart = "water"; updateChart(); highlightChartButton(); });
         chartSleepBtn.setOnClickListener(v -> { currentChart = "sleep"; updateChart(); highlightChartButton(); });
+        chartCaloriesBtn.setOnClickListener(v -> { currentChart = "calories"; updateChart(); highlightChartButton(); });
         highlightChartButton();
     }
 
@@ -177,6 +230,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         chartStepsBtn.setBackgroundTintList(android.content.res.ColorStateList.valueOf(getColor(android.R.color.darker_gray)));
         chartWaterBtn.setBackgroundTintList(android.content.res.ColorStateList.valueOf(getColor(android.R.color.darker_gray)));
         chartSleepBtn.setBackgroundTintList(android.content.res.ColorStateList.valueOf(getColor(android.R.color.darker_gray)));
+        chartCaloriesBtn.setBackgroundTintList(android.content.res.ColorStateList.valueOf(getColor(android.R.color.darker_gray)));
 
         switch (currentChart) {
             case "steps":
@@ -188,7 +242,231 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case "sleep":
                 chartSleepBtn.setBackgroundTintList(android.content.res.ColorStateList.valueOf(getColor(android.R.color.holo_purple)));
                 break;
+            case "calories":
+                chartCaloriesBtn.setBackgroundTintList(android.content.res.ColorStateList.valueOf(getColor(android.R.color.holo_orange_dark)));
+                break;
         }
+    }
+
+    private void saveToHistory(String type, int oldSteps, int oldWaterMl, float oldSleepHours, int oldCalories, int oldSyncCoins, int oldCaloriesValue) {
+        history.add(0, new ActionHistory(type, oldSteps, oldWaterMl, oldSleepHours, oldCalories, oldSyncCoins, oldCaloriesValue));
+        while (history.size() > MAX_HISTORY) {
+            history.remove(history.size() - 1);
+        }
+    }
+
+    // Откаты
+    private void undoSteps() {
+        for (int i = 0; i < history.size(); i++) {
+            ActionHistory action = history.get(i);
+            if (action.type.equals("steps")) {
+                steps = action.oldSteps;
+                syncCoins = action.oldSyncCoins;
+                history.remove(i);
+                updateUI();
+                saveAllHistory();
+                Toast.makeText(this, "Шаги возвращены", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+        Toast.makeText(this, "Нет действий для отката", Toast.LENGTH_SHORT).show();
+    }
+
+    private void undoWater() {
+        for (int i = 0; i < history.size(); i++) {
+            ActionHistory action = history.get(i);
+            if (action.type.equals("water")) {
+                waterMl = action.oldWaterMl;
+                syncCoins = action.oldSyncCoins;
+                history.remove(i);
+                updateUI();
+                saveAllHistory();
+                Toast.makeText(this, "Вода возвращена", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+        Toast.makeText(this, "Нет действий для отката", Toast.LENGTH_SHORT).show();
+    }
+
+    private void undoSleep() {
+        for (int i = 0; i < history.size(); i++) {
+            ActionHistory action = history.get(i);
+            if (action.type.equals("sleep")) {
+                sleepHours = action.oldSleepHours;
+                syncCoins = action.oldSyncCoins;
+                history.remove(i);
+                updateUI();
+                saveAllHistory();
+                Toast.makeText(this, "Сон возвращен", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+        Toast.makeText(this, "Нет действий для отката", Toast.LENGTH_SHORT).show();
+    }
+
+    private void undoCalories() {
+        for (int i = 0; i < history.size(); i++) {
+            ActionHistory action = history.get(i);
+            if (action.type.equals("calories")) {
+                calories = action.oldCaloriesValue;
+                syncCoins = action.oldSyncCoins;
+                history.remove(i);
+                updateUI();
+                saveAllHistory();
+                Toast.makeText(this, "Калории возвращены", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+        Toast.makeText(this, "Нет действий для отката", Toast.LENGTH_SHORT).show();
+    }
+
+    // Диалоги ручного ввода
+    private void showStepsInputDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Введите количество шагов");
+        EditText input = new EditText(this);
+        input.setHint("Шаги");
+        input.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+        builder.setView(input);
+
+        builder.setPositiveButton("Сохранить", (dialog, which) -> {
+            try {
+                int newSteps = Integer.parseInt(input.getText().toString());
+                if (newSteps >= 0 && newSteps <= 100000) {
+                    saveToHistory("steps", steps, waterMl, sleepHours, calories, syncCoins, calories);
+                    steps = newSteps;
+                    syncCoins++;
+                    saveAllHistory();
+                    updateUI();
+                    updateDailyInsight();
+                    updateBioAge();
+                    Toast.makeText(this, "Шаги обновлены: " + steps, Toast.LENGTH_SHORT).show();
+                }
+            } catch (Exception e) {
+                Toast.makeText(this, "Ошибка ввода", Toast.LENGTH_SHORT).show();
+            }
+        });
+        builder.setNegativeButton("Отмена", null);
+        builder.show();
+    }
+
+    private void showWaterInputDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Введите количество воды (мл)");
+        EditText input = new EditText(this);
+        input.setHint("мл");
+        input.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+        builder.setView(input);
+
+        builder.setPositiveButton("Сохранить", (dialog, which) -> {
+            try {
+                int newWater = Integer.parseInt(input.getText().toString());
+                if (newWater >= 0 && newWater <= 10000) {
+                    saveToHistory("water", steps, waterMl, sleepHours, calories, syncCoins, calories);
+                    waterMl = newWater;
+                    syncCoins++;
+                    saveAllHistory();
+                    updateUI();
+                    updateDailyInsight();
+                    Toast.makeText(this, "Вода обновлена: " + waterMl + " мл", Toast.LENGTH_SHORT).show();
+                }
+            } catch (Exception e) {
+                Toast.makeText(this, "Ошибка ввода", Toast.LENGTH_SHORT).show();
+            }
+        });
+        builder.setNegativeButton("Отмена", null);
+        builder.show();
+    }
+
+    private void showSleepInputDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Введите количество часов сна");
+        EditText input = new EditText(this);
+        input.setHint("часы");
+        input.setInputType(android.text.InputType.TYPE_CLASS_NUMBER | android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        builder.setView(input);
+
+        builder.setPositiveButton("Сохранить", (dialog, which) -> {
+            try {
+                float newSleep = Float.parseFloat(input.getText().toString());
+                if (newSleep >= 0 && newSleep <= 24) {
+                    saveToHistory("sleep", steps, waterMl, sleepHours, calories, syncCoins, calories);
+                    sleepHours = newSleep;
+                    syncCoins += 2;
+                    saveAllHistory();
+                    updateUI();
+                    updateDailyInsight();
+                    updateBioAge();
+                    Toast.makeText(this, "Сон обновлен: " + sleepHours + " ч", Toast.LENGTH_SHORT).show();
+                }
+            } catch (Exception e) {
+                Toast.makeText(this, "Ошибка ввода", Toast.LENGTH_SHORT).show();
+            }
+        });
+        builder.setNegativeButton("Отмена", null);
+        builder.show();
+    }
+
+    private void showCaloriesInputDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Введите количество калорий");
+        EditText input = new EditText(this);
+        input.setHint("калории");
+        input.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+        builder.setView(input);
+
+        builder.setPositiveButton("Сохранить", (dialog, which) -> {
+            try {
+                int newCalories = Integer.parseInt(input.getText().toString());
+                if (newCalories >= 0 && newCalories <= 10000) {
+                    saveToHistory("calories", steps, waterMl, sleepHours, calories, syncCoins, calories);
+                    calories = newCalories;
+                    syncCoins++;
+                    saveAllHistory();
+                    updateUI();
+                    updateDailyInsight();
+                    updateBioAge();
+                    Toast.makeText(this, "Калории обновлены: " + calories, Toast.LENGTH_SHORT).show();
+                }
+            } catch (Exception e) {
+                Toast.makeText(this, "Ошибка ввода", Toast.LENGTH_SHORT).show();
+            }
+        });
+        builder.setNegativeButton("Отмена", null);
+        builder.show();
+    }
+
+    private void showPressureInputDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Введите давление");
+        View view = getLayoutInflater().inflate(R.layout.dialog_vitals, null);
+        EditText pulseInput = view.findViewById(R.id.pulseInput);
+        EditText bpInput = view.findViewById(R.id.bpInput);
+
+        pulseInput.setText(String.valueOf(heartRate));
+        bpInput.setText(systolic + "/" + diastolic);
+
+        builder.setView(view);
+        builder.setPositiveButton("Сохранить", (dialog, which) -> {
+            try {
+                heartRate = Integer.parseInt(pulseInput.getText().toString());
+                String[] bp = bpInput.getText().toString().split("/");
+                if (bp.length == 2) {
+                    systolic = Integer.parseInt(bp[0]);
+                    diastolic = Integer.parseInt(bp[1]);
+                }
+                syncCoins += 5;
+                prefs.edit().putInt("syncCoins", syncCoins).apply();
+                updateUI();
+                updateDailyInsight();
+                updateBioAge();
+                Toast.makeText(this, "❤️ Показатели сохранены! +5 SyncCoin", Toast.LENGTH_SHORT).show();
+            } catch (Exception ex) {
+                Toast.makeText(this, "Ошибка ввода", Toast.LENGTH_SHORT).show();
+            }
+        });
+        builder.setNegativeButton("Отмена", null);
+        builder.show();
     }
 
     private void updateUI() {
@@ -231,6 +509,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         sleepGoalText.setText(sleepHours + "/" + sleepGoal + " ч");
         sleepProgressBar.setProgress(Math.min((int)(sleepHours / sleepGoal * 100), 100));
 
+        caloriesGoalText.setText(calories + "/" + caloriesGoal);
+        caloriesProgressBar.setProgress(Math.min((int)((float) calories / caloriesGoal * 100), 100));
+
         footerStepsText.setText(String.valueOf(steps));
         footerCaloriesText.setText(String.valueOf(calories));
         footerWaterText.setText(waterMl + " мл");
@@ -265,6 +546,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int maxSteps = 10000;
         int maxWater = 2000;
         float maxSleep = 10;
+        int maxCalories = 2000;
         String[] dayNames = {"ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС"};
 
         for (int i = 0; i < graphBars.length; i++) {
@@ -276,35 +558,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 case "steps":
                     heightPercent = (int) ((weekSteps[i] / (float) maxSteps) * 100);
                     valueText = weekSteps[i] + " шагов";
-                    if (weekSteps[i] >= stepsGoal) {
-                        color = getColor(android.R.color.holo_green_dark);
-                    } else if (weekSteps[i] >= stepsGoal / 2) {
-                        color = getColor(android.R.color.holo_orange_dark);
-                    } else {
-                        color = getColor(android.R.color.holo_red_dark);
-                    }
+                    color = getColor(android.R.color.holo_green_dark);
                     break;
                 case "water":
                     heightPercent = (int) ((weekWater[i] / (float) maxWater) * 100);
                     valueText = weekWater[i] + " мл";
-                    if (weekWater[i] >= waterGoal) {
-                        color = getColor(android.R.color.holo_green_dark);
-                    } else if (weekWater[i] >= waterGoal / 2) {
-                        color = getColor(android.R.color.holo_orange_dark);
-                    } else {
-                        color = getColor(android.R.color.holo_red_dark);
-                    }
+                    color = getColor(android.R.color.holo_blue_dark);
                     break;
                 case "sleep":
                     heightPercent = (int) ((weekSleep[i] / maxSleep) * 100);
                     valueText = weekSleep[i] + " ч";
-                    if (weekSleep[i] >= sleepGoal) {
-                        color = getColor(android.R.color.holo_green_dark);
-                    } else if (weekSleep[i] >= sleepGoal / 2) {
-                        color = getColor(android.R.color.holo_orange_dark);
-                    } else {
-                        color = getColor(android.R.color.holo_red_dark);
-                    }
+                    color = getColor(android.R.color.holo_purple);
+                    break;
+                case "calories":
+                    heightPercent = (int) ((weekCalories[i] / (float) maxCalories) * 100);
+                    valueText = weekCalories[i] + " ккал";
+                    color = getColor(android.R.color.holo_orange_dark);
+                    break;
+                default:
+                    heightPercent = 0;
+                    color = getColor(android.R.color.darker_gray);
                     break;
             }
 
@@ -332,9 +605,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         editor.putInt("steps_" + today, steps);
         editor.putInt("water_" + today, waterMl);
         editor.putFloat("sleep_" + today, sleepHours);
-        editor.putInt("totalSteps", prefs.getInt("totalSteps", 0) + steps);
-        editor.putInt("totalWater", prefs.getInt("totalWater", 0) + waterMl);
-        editor.putFloat("totalSleep", prefs.getFloat("totalSleep", 0) + sleepHours);
+        editor.putInt("calories_" + today, calories);
         editor.putInt("syncCoins", syncCoins);
         editor.putFloat("weight", (float) weight);
         editor.putFloat("height", (float) height);
@@ -347,6 +618,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             editor.remove("steps_" + oldDate);
             editor.remove("water_" + oldDate);
             editor.remove("sleep_" + oldDate);
+            editor.remove("calories_" + oldDate);
         }
         editor.apply();
         loadAllHistory();
@@ -361,6 +633,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             weekSteps[i] = prefs.getInt("steps_" + date, 0);
             weekWater[i] = prefs.getInt("water_" + date, 0);
             weekSleep[i] = prefs.getFloat("sleep_" + date, 0);
+            weekCalories[i] = prefs.getInt("calories_" + date, 0);
             cal.add(java.util.Calendar.DAY_OF_YEAR, -1);
         }
         updateChart();
@@ -372,6 +645,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 "💧 Вам нужно выпить " + Math.max(0, waterGoal - waterMl) + " мл воды.",
                 "👣 Сегодня вы прошли " + steps + " шагов. " + (steps >= stepsGoal ? "Цель выполнена! 🎉" : "До цели осталось " + (stepsGoal - steps)),
                 "😴 " + (sleepHours == 0 ? "Запишите сон для анализа" : "Сон: " + sleepHours + " ч. " + (sleepHours >= sleepGoal ? "Отлично выспались! ✨" : "Старайтесь спать больше")),
+                "🔥 Сегодня сожжено " + calories + " ккал. " + (calories >= caloriesGoal ? "Цель выполнена! 🎉" : "До цели осталось " + (caloriesGoal - calories)),
                 "⚖️ " + bmiCategoryText.getText(),
                 "🫀 " + getPressureDescription()
         };
@@ -391,9 +665,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int actualAge = 28;
         int bioAge = actualAge;
 
-        if (steps > 7000 && sleepHours >= 7 && heartRate < 70 && systolic < 120) {
+        if (steps > 7000 && sleepHours >= 7 && heartRate < 70 && systolic < 120 && calories >= 2000) {
             bioAge = Math.max(18, actualAge - 3);
-        } else if (steps < 3000 || sleepHours < 6 || heartRate > 80 || systolic > 130) {
+        } else if (steps < 3000 || sleepHours < 6 || heartRate > 80 || systolic > 130 || calories < 1000) {
             bioAge = actualAge + 5;
         } else if (steps < 5000 || sleepHours < 6.5) {
             bioAge = actualAge + 2;
@@ -403,9 +677,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         bioAgeText.setText("Биологический возраст: " + bioAge + "\n(фактический: " + actualAge + ") " + comparison);
     }
 
+    // Быстрый ввод
     private void quickSteps() {
+        saveToHistory("steps", steps, waterMl, sleepHours, calories, syncCoins, calories);
         steps += 500;
-        calories += 30;
         syncCoins++;
         updateUI();
         updateDailyInsight();
@@ -418,6 +693,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void quickWater() {
+        saveToHistory("water", steps, waterMl, sleepHours, calories, syncCoins, calories);
         waterMl += 250;
         syncCoins++;
         updateUI();
@@ -429,34 +705,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    private void quickPressure() {
-        systolic = random.nextInt(20) + 110;
-        diastolic = random.nextInt(15) + 70;
-        heartRate = random.nextInt(15) + 60;
-        syncCoins += 2;
-        updateUI();
-        updateDailyInsight();
-        updateBioAge();
-        Toast.makeText(this, "🫀 Давление: " + systolic + "/" + diastolic + "\n" + getPressureDescription() + " +2 SyncCoin", Toast.LENGTH_LONG).show();
-    }
-
-    private void addSteps() {
-        steps += 500;
-        calories += 30;
-        updateUI();
-        updateDailyInsight();
-        updateBioAge();
-        saveAllHistory();
-    }
-
-    private void addWater() {
-        waterMl += 250;
-        updateUI();
-        updateDailyInsight();
-        saveAllHistory();
-    }
-
-    private void addSleep() {
+    private void quickSleep() {
+        saveToHistory("sleep", steps, waterMl, sleepHours, calories, syncCoins, calories);
         sleepHours = Math.min(sleepGoal + 2, sleepHours + 1);
         syncCoins += 2;
         updateUI();
@@ -469,78 +719,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    private void addVitals() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Введите показатели");
-
-        View view = getLayoutInflater().inflate(R.layout.dialog_vitals, null);
-        EditText pulseInput = view.findViewById(R.id.pulseInput);
-        EditText bpInput = view.findViewById(R.id.bpInput);
-
-        pulseInput.setText(String.valueOf(heartRate));
-        bpInput.setText(systolic + "/" + diastolic);
-
-        builder.setView(view);
-        builder.setPositiveButton("Сохранить", (dialog, which) -> {
-            try {
-                heartRate = Integer.parseInt(pulseInput.getText().toString());
-                String[] bp = bpInput.getText().toString().split("/");
-                if (bp.length == 2) {
-                    systolic = Integer.parseInt(bp[0]);
-                    diastolic = Integer.parseInt(bp[1]);
-                }
-                syncCoins += 5;
-                updateUI();
-                updateDailyInsight();
-                updateBioAge();
-                saveAllHistory();
-                Toast.makeText(this, "❤️ Показатели сохранены! +5 SyncCoin", Toast.LENGTH_SHORT).show();
-            } catch (Exception ex) {
-                Toast.makeText(this, "Ошибка ввода", Toast.LENGTH_SHORT).show();
-            }
-        });
-        builder.setNegativeButton("Отмена", null);
-        builder.show();
+    private void quickCalories() {
+        saveToHistory("calories", steps, waterMl, sleepHours, calories, syncCoins, calories);
+        calories += 100;
+        syncCoins++;
+        updateUI();
+        updateDailyInsight();
+        updateBioAge();
+        saveAllHistory();
+        Toast.makeText(this, "🔥 +100 калорий! +1 SyncCoin", Toast.LENGTH_SHORT).show();
+        if (calories >= caloriesGoal) {
+            Toast.makeText(this, "🎉 Поздравляем! Вы выполнили норму калорий!", Toast.LENGTH_LONG).show();
+        }
     }
 
-    private void logSleep() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Запись сна");
-
-        EditText input = new EditText(this);
-        input.setHint("Часы сна");
-        input.setText(String.valueOf(sleepHours));
-        builder.setView(input);
-
-        builder.setPositiveButton("Сохранить", (dialog, which) -> {
-            try {
-                float newSleep = Float.parseFloat(input.getText().toString());
-                if (newSleep > 0 && newSleep < 24) {
-                    sleepHours = newSleep;
-                    syncCoins += 3;
-                    updateUI();
-                    updateDailyInsight();
-                    updateBioAge();
-                    saveAllHistory();
-                    Toast.makeText(this, "😴 Сон записан! +3 SyncCoin", Toast.LENGTH_SHORT).show();
-                }
-            } catch (Exception ex) {
-                Toast.makeText(this, "Ошибка ввода", Toast.LENGTH_SHORT).show();
-            }
-        });
-        builder.setNegativeButton("Отмена", null);
-        builder.show();
-    }
-
+    // Настройка целей
     private void editWaterGoal() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Цель по воде");
-
         EditText input = new EditText(this);
         input.setHint("мл в день");
         input.setText(String.valueOf(waterGoal));
         builder.setView(input);
-
         builder.setPositiveButton("Сохранить", (dialog, which) -> {
             try {
                 waterGoal = Integer.parseInt(input.getText().toString());
@@ -558,12 +758,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void editStepsGoal() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Цель по шагам");
-
         EditText input = new EditText(this);
         input.setHint("Шагов в день");
         input.setText(String.valueOf(stepsGoal));
         builder.setView(input);
-
         builder.setPositiveButton("Сохранить", (dialog, which) -> {
             try {
                 stepsGoal = Integer.parseInt(input.getText().toString());
@@ -581,18 +779,37 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void editSleepGoal() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Цель по сну");
-
         EditText input = new EditText(this);
         input.setHint("Часов сна");
         input.setText(String.valueOf(sleepGoal));
         builder.setView(input);
-
         builder.setPositiveButton("Сохранить", (dialog, which) -> {
             try {
                 sleepGoal = Float.parseFloat(input.getText().toString());
                 prefs.edit().putFloat("sleepGoal", sleepGoal).apply();
                 updateUI();
                 Toast.makeText(this, "😴 Цель обновлена!", Toast.LENGTH_SHORT).show();
+            } catch (Exception ex) {
+                Toast.makeText(this, "Ошибка ввода", Toast.LENGTH_SHORT).show();
+            }
+        });
+        builder.setNegativeButton("Отмена", null);
+        builder.show();
+    }
+
+    private void editCaloriesGoal() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Цель по калориям");
+        EditText input = new EditText(this);
+        input.setHint("калорий в день");
+        input.setText(String.valueOf(caloriesGoal));
+        builder.setView(input);
+        builder.setPositiveButton("Сохранить", (dialog, which) -> {
+            try {
+                caloriesGoal = Integer.parseInt(input.getText().toString());
+                prefs.edit().putInt("caloriesGoal", caloriesGoal).apply();
+                updateUI();
+                Toast.makeText(this, "🔥 Цель обновлена!", Toast.LENGTH_SHORT).show();
             } catch (Exception ex) {
                 Toast.makeText(this, "Ошибка ввода", Toast.LENGTH_SHORT).show();
             }
@@ -663,11 +880,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             startActivity(new Intent(this, HistoryActivity.class));
         } else if (id == R.id.nav_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
-        }  else if (id == R.id.nav_logout) {
-        prefs.edit().putBoolean("isLoggedIn", false).clear().apply();
-        startActivity(new Intent(this, LoginActivity.class));
-        finish();
-    }
+        } else if (id == R.id.nav_logout) {
+            prefs.edit().putBoolean("isLoggedIn", false).apply();
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+        }
 
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
