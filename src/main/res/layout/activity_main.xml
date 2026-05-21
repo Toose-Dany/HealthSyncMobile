@@ -285,6 +285,60 @@
                             </LinearLayout>
                         </LinearLayout>
 
+                        <!-- Сон -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginTop="12dp">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="😴 Сон:"
+                                android:textSize="12sp"
+                                android:textColor="#333333" />
+
+                            <TextView
+                                android:id="@+id/sleepHoursText"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="0 ч"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:textColor="#5C6BC0"
+                                android:gravity="end" />
+                        </LinearLayout>
+
+                        <!-- Оценка сна -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginTop="8dp">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="😴 Оценка сна:"
+                                android:textSize="12sp"
+                                android:textColor="#333333" />
+
+                            <TextView
+                                android:id="@+id/sleepScoreText"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="0"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:textColor="#5C6BC0"
+                                android:gravity="end" />
+                        </LinearLayout>
+
                         <Button
                             android:id="@+id/addVitalsButton"
                             android:layout_width="match_parent"
@@ -296,8 +350,6 @@
                             android:textColor="#1A237E" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
-
-
 
                 <!-- График активности -->
                 <LinearLayout
@@ -390,6 +442,8 @@
                                 android:gravity="bottom"
                                 android:layout_marginBottom="8dp">
 
+
+
                                 <View
                                     android:id="@+id/day1Bar"
                                     android:layout_width="0dp"
@@ -445,12 +499,14 @@
                                     android:layout_weight="1"
                                     android:background="#4CAF50"
                                     android:layout_marginHorizontal="2dp" />
+
                             </LinearLayout>
 
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:orientation="horizontal">
+                                android:orientation="horizontal"
+                                android:layout_marginTop="8dp">
 
                                 <TextView
                                     android:layout_width="0dp"
@@ -650,8 +706,6 @@
                         android:gravity="center" />
                 </LinearLayout>
 
-
-
                 <!-- Цели на сегодня -->
                 <TextView
                     android:layout_width="match_parent"
@@ -723,7 +777,6 @@
                                 android:layout_marginTop="4dp" />
                         </LinearLayout>
 
-                        <!-- Карандаш - ручной ввод -->
                         <Button
                             android:id="@+id/editWaterButton"
                             android:layout_width="48dp"
@@ -735,7 +788,6 @@
                             android:layout_marginLeft="4dp"
                             android:padding="0dp" />
 
-                        <!-- Стрелка - откат -->
                         <Button
                             android:id="@+id/undoWaterButton"
                             android:layout_width="48dp"
@@ -810,7 +862,6 @@
                                 android:layout_marginTop="4dp" />
                         </LinearLayout>
 
-                        <!-- Карандаш - ручной ввод -->
                         <Button
                             android:id="@+id/editStepsButton"
                             android:layout_width="48dp"
@@ -822,7 +873,6 @@
                             android:layout_marginLeft="4dp"
                             android:padding="0dp" />
 
-                        <!-- Стрелка - откат -->
                         <Button
                             android:id="@+id/undoStepsButton"
                             android:layout_width="48dp"
@@ -897,7 +947,6 @@
                                 android:layout_marginTop="4dp" />
                         </LinearLayout>
 
-                        <!-- Карандаш - ручной ввод -->
                         <Button
                             android:id="@+id/editSleepButton"
                             android:layout_width="48dp"
@@ -909,7 +958,6 @@
                             android:layout_marginLeft="4dp"
                             android:padding="0dp" />
 
-                        <!-- Стрелка - откат -->
                         <Button
                             android:id="@+id/undoSleepButton"
                             android:layout_width="48dp"
@@ -984,7 +1032,6 @@
                                 android:layout_marginTop="4dp" />
                         </LinearLayout>
 
-                        <!-- Карандаш - ручной ввод -->
                         <Button
                             android:id="@+id/editCaloriesButton"
                             android:layout_width="48dp"
@@ -996,7 +1043,6 @@
                             android:layout_marginLeft="4dp"
                             android:padding="0dp" />
 
-                        <!-- Стрелка - откат -->
                         <Button
                             android:id="@+id/undoCaloriesButton"
                             android:layout_width="48dp"

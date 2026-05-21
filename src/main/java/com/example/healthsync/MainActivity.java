@@ -19,6 +19,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -628,12 +629,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault());
         java.util.Calendar cal = java.util.Calendar.getInstance();
 
-        for (int i = 6; i >= 0; i--) {
+        // Очищаем массивы
+        weekSteps = new int[]{0, 0, 0, 0, 0, 0, 0};
+        weekWater = new int[]{0, 0, 0, 0, 0, 0, 0};
+        weekSleep = new float[]{0, 0, 0, 0, 0, 0, 0};
+        weekCalories = new int[]{0, 0, 0, 0, 0, 0, 0};
+
+        // Загружаем данные за последние 7 дней
+        for (int i = 0; i < 7; i++) {
             String date = sdf.format(cal.getTime());
-            weekSteps[i] = prefs.getInt("steps_" + date, 0);
-            weekWater[i] = prefs.getInt("water_" + date, 0);
-            weekSleep[i] = prefs.getFloat("sleep_" + date, 0);
-            weekCalories[i] = prefs.getInt("calories_" + date, 0);
+
+            // Определяем день недели для этой даты
+            int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+            int index;
+            if (dayOfWeek == Calendar.SUNDAY) {
+                index = 6;  // воскресенье - индекс 6
+            } else {
+                index = dayOfWeek - 2;  // понедельник = 0, вторник = 1, ..., суббота = 5
+            }
+
+            weekSteps[index] = prefs.getInt("steps_" + date, 0);
+            weekWater[index] = prefs.getInt("water_" + date, 0);
+            weekSleep[index] = prefs.getFloat("sleep_" + date, 0);
+            weekCalories[index] = prefs.getInt("calories_" + date, 0);
+
             cal.add(java.util.Calendar.DAY_OF_YEAR, -1);
         }
         updateChart();
@@ -681,6 +700,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void quickSteps() {
         saveToHistory("steps", steps, waterMl, sleepHours, calories, syncCoins, calories);
         steps += 500;
+        calories += 30;
         syncCoins++;
         updateUI();
         updateDailyInsight();
