@@ -39,10 +39,13 @@ public class HistoryActivity extends AppCompatActivity {
 
         for (int i = 0; i < 7; i++) {
             String date = sdf.format(cal.getTime());
-            int steps = prefs.getInt("steps_" + date, 0);
-            int water = prefs.getInt("water_" + date, 0);
-            float sleep = prefs.getFloat("sleep_" + date, 0);
-            int calories = prefs.getInt("calories_" + date, 0);
+            // Для чтения используем тот же формат, что и при сохранении
+            String storageDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(cal.getTime());
+
+            int steps = prefs.getInt("steps_" + storageDate, 0);
+            int water = prefs.getInt("water_" + storageDate, 0);
+            float sleep = prefs.getFloat("sleep_" + storageDate, 0);
+            int calories = prefs.getInt("calories_" + storageDate, 0);
 
             sb.append("📅 ").append(date).append("\n");
             sb.append("   👣 Шаги: ").append(steps).append("\n");
@@ -54,5 +57,8 @@ public class HistoryActivity extends AppCompatActivity {
         }
 
         historyText.setText(sb.toString());
+
+        // Отладка: посмотрим какие ключи есть в SharedPreferences
+        android.util.Log.d("HISTORY", "Все ключи: " + prefs.getAll().keySet());
     }
 }

@@ -6,13 +6,11 @@
     android:layout_height="match_parent"
     android:background="#F5F5F5">
 
-    <!-- Основной контент -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- Toolbar -->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -21,7 +19,6 @@
             app:titleTextColor="@android:color/white"
             app:title="HealthSync" />
 
-        <!-- ScrollView с контентом -->
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -285,7 +282,6 @@
                             </LinearLayout>
                         </LinearLayout>
 
-                        <!-- Сон -->
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -312,7 +308,6 @@
                                 android:gravity="end" />
                         </LinearLayout>
 
-                        <!-- Оценка сна -->
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -348,6 +343,89 @@
                             android:layout_marginTop="12dp"
                             android:backgroundTint="#E8EAF6"
                             android:textColor="#1A237E" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Погода -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="12dp"
+                    android:layout_marginBottom="16dp"
+                    app:cardElevation="2dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp"
+                        android:background="@android:color/white">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="🌤️ ПОГОДА"
+                            android:textSize="12sp"
+                            android:textColor="#666666"
+                            android:layout_marginBottom="10dp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/weatherIcon"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="☀️"
+                                android:textSize="32sp"
+                                android:layout_marginRight="15dp" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/weatherTemp"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="--°C"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold"
+                                    android:textColor="#000000" />
+
+                                <TextView
+                                    android:id="@+id/weatherCondition"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Загрузка..."
+                                    android:textSize="11sp"
+                                    android:textColor="#666666" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/weatherRecommendation"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="..."
+                            android:textSize="12sp"
+                            android:textColor="#333333"
+                            android:layout_marginTop="10dp" />
+
+                        <Button
+                            android:id="@+id/refreshWeatherButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="30dp"
+                            android:text="🔄 Обновить"
+                            android:textSize="10sp"
+                            android:layout_marginTop="10dp"
+                            android:backgroundTint="#1A237E"
+                            android:textColor="@android:color/white" />
+
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
@@ -441,8 +519,6 @@
                                 android:orientation="horizontal"
                                 android:gravity="bottom"
                                 android:layout_marginBottom="8dp">
-
-
 
                                 <View
                                     android:id="@+id/day1Bar"
@@ -632,14 +708,11 @@
                             android:textStyle="bold"
                             android:layout_marginTop="5dp" />
 
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="(фактический: 28)"
-                            android:textColor="#E0E0FF"
-                            android:textSize="10sp" />
+                        
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
+
+
 
                 <!-- Быстрый ввод -->
                 <TextView
@@ -1226,7 +1299,6 @@
         </ScrollView>
     </LinearLayout>
 
-    <!-- Боковое меню -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
         android:layout_width="wrap_content"

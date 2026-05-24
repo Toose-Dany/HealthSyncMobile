@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private int syncCoins = 150;
     private double weight = 72.5;
     private double height = 178;
+    private int age;
     private int heartRate = 68;
     private int systolic = 118;
     private int diastolic = 75;
@@ -65,6 +66,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Button undoStepsBtn, undoWaterBtn, undoSleepBtn, undoCaloriesBtn;
     private SharedPreferences prefs;
     private DrawerLayout drawerLayout;
+    private TextView weatherTemp, weatherCondition, weatherRecommendation, weatherIcon;
+    private Button refreshWeatherButton;
 
     private Random random = new Random();
 
@@ -106,6 +109,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         updateDailyInsight();
         updateBioAge();
 
+        loadWeather();
+        refreshWeatherButton.setOnClickListener(v -> loadWeather());
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -121,19 +127,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onResume() {
         super.onResume();
-        loadUserData();
+        loadUserData();      // перезагружает вес, рост, возраст
         loadSettings();
         loadAllHistory();
         updateUI();
         updateChart();
         updateDailyInsight();
-        updateBioAge();
+        updateBioAge();      // пересчитываем биологический возраст
     }
 
     private void loadUserData() {
         weight = prefs.getFloat("weight", 72.5f);
         height = prefs.getFloat("height", 178f);
         syncCoins = prefs.getInt("syncCoins", 150);
+        age = prefs.getInt("age", 0);  // 0 = нет возраста
     }
 
     private void loadSettings() {
@@ -189,22 +196,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         undoWaterBtn = findViewById(R.id.undoWaterButton);
         undoSleepBtn = findViewById(R.id.undoSleepButton);
         undoCaloriesBtn = findViewById(R.id.undoCaloriesButton);
+        weatherTemp = findViewById(R.id.weatherTemp);
+        weatherCondition = findViewById(R.id.weatherCondition);
+        weatherRecommendation = findViewById(R.id.weatherRecommendation);
+        weatherIcon = findViewById(R.id.weatherIcon);
+        refreshWeatherButton = findViewById(R.id.refreshWeatherButton);
     }
 
     private void setupClickListeners() {
-        // Быстрый ввод
         findViewById(R.id.quickStepsButton).setOnClickListener(v -> quickSteps());
         findViewById(R.id.quickWaterButton).setOnClickListener(v -> quickWater());
         findViewById(R.id.quickSleepButton).setOnClickListener(v -> quickSleep());
         findViewById(R.id.quickCaloriesButton).setOnClickListener(v -> quickCalories());
 
-        // Ручной ввод
         editStepsBtn.setOnClickListener(v -> showStepsInputDialog());
         editWaterBtn.setOnClickListener(v -> showWaterInputDialog());
         editSleepBtn.setOnClickListener(v -> showSleepInputDialog());
         editCaloriesBtn.setOnClickListener(v -> showCaloriesInputDialog());
 
-        // Откат
         undoStepsBtn.setOnClickListener(v -> undoSteps());
         undoWaterBtn.setOnClickListener(v -> undoWater());
         undoSleepBtn.setOnClickListener(v -> undoSleep());
@@ -256,7 +265,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    // Откаты
     private void undoSteps() {
         for (int i = 0; i < history.size(); i++) {
             ActionHistory action = history.get(i);
@@ -321,7 +329,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toast.makeText(this, "Нет действий для отката", Toast.LENGTH_SHORT).show();
     }
 
-    // Диалоги ручного ввода
     private void showStepsInputDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Введите количество шагов");
@@ -544,51 +551,82 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void updateChart() {
         if (graphBars == null) return;
 
-        int maxSteps = 10000;
-        int maxWater = 2000;
-        float maxSleep = 10;
-        int maxCalories = 2000;
         String[] dayNames = {"ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС"};
 
-        for (int i = 0; i < graphBars.length; i++) {
-            int heightPercent = 0;
-            int color = 0;
-            String valueText = "";
+        int targetValue = 0;
+        int[] currentValues = null;
+        float[] currentFloatValues = null;
+        boolean isFloat = false;
+        int color = 0;
 
-            switch (currentChart) {
-                case "steps":
-                    heightPercent = (int) ((weekSteps[i] / (float) maxSteps) * 100);
-                    valueText = weekSteps[i] + " шагов";
-                    color = getColor(android.R.color.holo_green_dark);
-                    break;
-                case "water":
-                    heightPercent = (int) ((weekWater[i] / (float) maxWater) * 100);
-                    valueText = weekWater[i] + " мл";
-                    color = getColor(android.R.color.holo_blue_dark);
-                    break;
-                case "sleep":
-                    heightPercent = (int) ((weekSleep[i] / maxSleep) * 100);
-                    valueText = weekSleep[i] + " ч";
-                    color = getColor(android.R.color.holo_purple);
-                    break;
-                case "calories":
-                    heightPercent = (int) ((weekCalories[i] / (float) maxCalories) * 100);
-                    valueText = weekCalories[i] + " ккал";
-                    color = getColor(android.R.color.holo_orange_dark);
-                    break;
-                default:
-                    heightPercent = 0;
-                    color = getColor(android.R.color.darker_gray);
-                    break;
+        switch (currentChart) {
+            case "steps":
+                targetValue = stepsGoal;
+                currentValues = weekSteps;
+                color = getColor(android.R.color.holo_green_dark);
+                break;
+            case "water":
+                targetValue = waterGoal;
+                currentValues = weekWater;
+                color = getColor(android.R.color.holo_blue_dark);
+                break;
+            case "sleep":
+                targetValue = (int) sleepGoal;
+                currentFloatValues = weekSleep;
+                isFloat = true;
+                color = getColor(android.R.color.holo_purple);
+                break;
+            case "calories":
+                targetValue = caloriesGoal;
+                currentValues = weekCalories;
+                color = getColor(android.R.color.holo_orange_dark);
+                break;
+        }
+
+        if (targetValue <= 0) targetValue = 1;
+
+        // Находим максимальное значение среди данных
+        int maxDataValue = 0;
+        if (!isFloat) {
+            for (int v : currentValues) {
+                if (v > maxDataValue) maxDataValue = v;
+            }
+        } else {
+            for (float v : currentFloatValues) {
+                if ((int)v > maxDataValue) maxDataValue = (int)v;
+            }
+        }
+
+        // Максимум для графика = максимум из (данные, цель)
+        int maxValue = Math.max(maxDataValue, targetValue);
+        if (maxValue <= 0) maxValue = 1;
+
+        // Рисуем бары
+        for (int i = 0; i < graphBars.length; i++) {
+            int currentValue = 0;
+            if (!isFloat) {
+                currentValue = currentValues[i];
+            } else {
+                currentValue = (int) currentFloatValues[i];
             }
 
+            int heightPercent = (int)((currentValue / (float) maxValue) * 100);
             int finalHeight = Math.max(20, Math.min(heightPercent, 100));
+
             graphBars[i].getLayoutParams().height = dpToPx(finalHeight);
-            graphBars[i].setBackgroundColor(color);
+
+            // Золотой цвет при достижении цели
+            if (currentValue >= targetValue && currentValue > 0) {
+                graphBars[i].setBackgroundColor(getColor(android.R.color.holo_orange_light));
+            } else {
+                graphBars[i].setBackgroundColor(color);
+            }
             graphBars[i].requestLayout();
 
             final int position = i;
-            final String value = valueText;
+            final String value = currentValue + (currentChart.equals("steps") ? " шагов" :
+                    currentChart.equals("water") ? " мл" :
+                            currentChart.equals("sleep") ? " ч" : " ккал");
             graphBars[i].setOnClickListener(v ->
                     Toast.makeText(MainActivity.this, dayNames[position] + ": " + value, Toast.LENGTH_SHORT).show());
         }
@@ -610,6 +648,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         editor.putInt("syncCoins", syncCoins);
         editor.putFloat("weight", (float) weight);
         editor.putFloat("height", (float) height);
+        editor.putInt("age", age);
         editor.apply();
 
         java.util.Calendar cal = java.util.Calendar.getInstance();
@@ -643,9 +682,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
             int index;
             if (dayOfWeek == Calendar.SUNDAY) {
-                index = 6;  // воскресенье - индекс 6
+                index = 6;
             } else {
-                index = dayOfWeek - 2;  // понедельник = 0, вторник = 1, ..., суббота = 5
+                index = dayOfWeek - 2;
             }
 
             weekSteps[index] = prefs.getInt("steps_" + date, 0);
@@ -681,22 +720,79 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void updateBioAge() {
-        int actualAge = 28;
-        int bioAge = actualAge;
+        // Берем возраст из SharedPreferences (тот, что в профиле)
+        int actualAge = prefs.getInt("age", 0);
 
-        if (steps > 7000 && sleepHours >= 7 && heartRate < 70 && systolic < 120 && calories >= 2000) {
-            bioAge = Math.max(18, actualAge - 3);
-        } else if (steps < 3000 || sleepHours < 6 || heartRate > 80 || systolic > 130 || calories < 1000) {
-            bioAge = actualAge + 5;
-        } else if (steps < 5000 || sleepHours < 6.5) {
-            bioAge = actualAge + 2;
+        // Если возраст еще не введен
+        if (actualAge <= 0) {
+            bioAgeText.setText("Биологический возраст: введите возраст в профиле\n(фактический: не указан)");
+            return;
         }
 
-        String comparison = bioAge < actualAge ? "Моложе! 🎉" : (bioAge > actualAge ? "Старше ⚠️" : "Совпадает ✅");
+        int bioAge = actualAge;
+
+        double bmi = weight / Math.pow(height / 100, 2);
+
+        // ИМТ
+        if (bmi < 18.5 || bmi > 30)
+            bioAge += 2;
+        else if (bmi >= 22 && bmi <= 25)
+            bioAge -= 1;
+
+        // Шаги
+        if (steps >= 10000)
+            bioAge -= 2;
+        else if (steps >= 7000)
+            bioAge -= 1;
+        else if (steps < 3000)
+            bioAge += 3;
+        else if (steps < 5000)
+            bioAge += 1;
+
+        // Сон
+        if (sleepHours >= 7 && sleepHours <= 8)
+            bioAge -= 2;
+        else if (sleepHours < 5 || sleepHours > 9)
+            bioAge += 3;
+        else if (sleepHours < 6)
+            bioAge += 1;
+
+        // Пульс
+        if (heartRate >= 60 && heartRate <= 70)
+            bioAge -= 1;
+        else if (heartRate > 80)
+            bioAge += 2;
+        else if (heartRate > 90)
+            bioAge += 4;
+
+        // Давление
+        if (systolic >= 110 && systolic <= 120)
+            bioAge -= 1;
+        else if (systolic > 130)
+            bioAge += 2;
+        else if (systolic > 140)
+            bioAge += 4;
+
+        // Вода
+        float waterLiters = waterMl / 1000f;
+        if (waterLiters >= 2.0)
+            bioAge -= 1;
+        else if (waterLiters < 1.0)
+            bioAge += 1;
+
+        bioAge = Math.max(18, Math.min(80, bioAge));
+
+        String comparison;
+        if (bioAge < actualAge)
+            comparison = "🏆 Вы моложе своего возраста! Так держать!";
+        else if (bioAge > actualAge)
+            comparison = "⚠️ Ваш организм старше. Пора заняться здоровьем!";
+        else
+            comparison = "✅ Ваш биологический возраст соответствует календарному.";
+
         bioAgeText.setText("Биологический возраст: " + bioAge + "\n(фактический: " + actualAge + ") " + comparison);
     }
 
-    // Быстрый ввод
     private void quickSteps() {
         saveToHistory("steps", steps, waterMl, sleepHours, calories, syncCoins, calories);
         steps += 500;
@@ -753,7 +849,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    // Настройка целей
     private void editWaterGoal() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Цель по воде");
@@ -766,6 +861,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 waterGoal = Integer.parseInt(input.getText().toString());
                 prefs.edit().putInt("waterGoal", waterGoal).apply();
                 updateUI();
+                updateChart();
                 Toast.makeText(this, "💧 Цель обновлена!", Toast.LENGTH_SHORT).show();
             } catch (Exception ex) {
                 Toast.makeText(this, "Ошибка ввода", Toast.LENGTH_SHORT).show();
@@ -787,6 +883,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 stepsGoal = Integer.parseInt(input.getText().toString());
                 prefs.edit().putInt("stepsGoal", stepsGoal).apply();
                 updateUI();
+                updateChart();
                 Toast.makeText(this, "👣 Цель обновлена!", Toast.LENGTH_SHORT).show();
             } catch (Exception ex) {
                 Toast.makeText(this, "Ошибка ввода", Toast.LENGTH_SHORT).show();
@@ -808,6 +905,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 sleepGoal = Float.parseFloat(input.getText().toString());
                 prefs.edit().putFloat("sleepGoal", sleepGoal).apply();
                 updateUI();
+                updateChart();
                 Toast.makeText(this, "😴 Цель обновлена!", Toast.LENGTH_SHORT).show();
             } catch (Exception ex) {
                 Toast.makeText(this, "Ошибка ввода", Toast.LENGTH_SHORT).show();
@@ -829,6 +927,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 caloriesGoal = Integer.parseInt(input.getText().toString());
                 prefs.edit().putInt("caloriesGoal", caloriesGoal).apply();
                 updateUI();
+                updateChart();
                 Toast.makeText(this, "🔥 Цель обновлена!", Toast.LENGTH_SHORT).show();
             } catch (Exception ex) {
                 Toast.makeText(this, "Ошибка ввода", Toast.LENGTH_SHORT).show();
@@ -917,5 +1016,38 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else {
             super.onBackPressed();
         }
+    }
+
+    private void loadWeather() {
+        WeatherService.getWeather("Moscow", new WeatherService.WeatherCallback() {
+            @Override
+            public void onSuccess(String temperature, String condition, String recommendation) {
+                runOnUiThread(() -> {
+                    weatherTemp.setText(temperature);
+                    weatherCondition.setText(condition);
+                    weatherRecommendation.setText(recommendation);
+
+                    if (temperature.contains("-") || temperature.startsWith("-")) {
+                        weatherIcon.setText("❄️");
+                    } else if (Integer.parseInt(temperature.replace("°C", "")) > 25) {
+                        weatherIcon.setText("🔥");
+                    } else if (Integer.parseInt(temperature.replace("°C", "")) > 15) {
+                        weatherIcon.setText("☀️");
+                    } else if (Integer.parseInt(temperature.replace("°C", "")) > 5) {
+                        weatherIcon.setText("🌤️");
+                    } else {
+                        weatherIcon.setText("🌬️");
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> {
+                    weatherCondition.setText(error);
+                    weatherRecommendation.setText("Проверьте интернет");
+                });
+            }
+        });
     }
 }

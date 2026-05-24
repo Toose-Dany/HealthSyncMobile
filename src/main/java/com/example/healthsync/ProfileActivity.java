@@ -13,7 +13,7 @@ import androidx.appcompat.widget.Toolbar;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    private TextView heightText, weightText, bmiText, bmiCategoryText;
+    private TextView heightText, weightText, bmiText, bmiCategoryText, ageText;
     private TextView totalStepsText, totalWaterText, totalSleepText, totalCaloriesText, totalCoinsText;
     private TextView daysActiveText, achievementsCountText;
     private Button editProfileButton;
@@ -21,6 +21,7 @@ public class ProfileActivity extends AppCompatActivity {
     private SharedPreferences prefs;
     private double weight = 72.5;
     private double height = 178;
+    private int age = 0;
     private int syncCoins = 150;
     private int steps = 0;
     private int waterMl = 0;
@@ -45,9 +46,11 @@ public class ProfileActivity extends AppCompatActivity {
         updateUI();
     }
 
+
     private void loadSavedData() {
         weight = prefs.getFloat("weight", 72.5f);
         height = prefs.getFloat("height", 178f);
+        age = prefs.getInt("age", 0);
         syncCoins = prefs.getInt("syncCoins", 150);
         steps = prefs.getInt("totalSteps", 0);
         waterMl = prefs.getInt("totalWater", 0);
@@ -60,6 +63,7 @@ public class ProfileActivity extends AppCompatActivity {
         weightText = findViewById(R.id.profileWeightText);
         bmiText = findViewById(R.id.profileBMIText);
         bmiCategoryText = findViewById(R.id.profileBMICategoryText);
+        ageText = findViewById(R.id.profileAgeText);
         totalStepsText = findViewById(R.id.totalStepsText);
         totalWaterText = findViewById(R.id.totalWaterText);
         totalSleepText = findViewById(R.id.totalSleepText);
@@ -77,6 +81,13 @@ public class ProfileActivity extends AppCompatActivity {
     private void updateUI() {
         heightText.setText((int) height + " см");
         weightText.setText(weight + " кг");
+
+        if (age > 0) {
+            ageText.setText(age + " лет");
+        } else {
+            ageText.setText("не указан");
+        }
+
         totalCoinsText.setText(String.valueOf(syncCoins));
 
         double bmi = weight / Math.pow(height / 100, 2);
@@ -115,25 +126,53 @@ public class ProfileActivity extends AppCompatActivity {
         View view = getLayoutInflater().inflate(R.layout.dialog_edit_profile, null);
         EditText heightInput = view.findViewById(R.id.editHeightInput);
         EditText weightInput = view.findViewById(R.id.editWeightInput);
+        EditText ageInput = view.findViewById(R.id.editAgeInput);
 
         heightInput.setText(String.valueOf((int) height));
         weightInput.setText(String.valueOf(weight));
+
+        if (age > 0) {
+            ageInput.setText(String.valueOf(age));
+        } else {
+            ageInput.setText("");
+        }
 
         builder.setView(view);
         builder.setPositiveButton("Сохранить", (dialog, which) -> {
             try {
                 double newHeight = Double.parseDouble(heightInput.getText().toString());
                 double newWeight = Double.parseDouble(weightInput.getText().toString());
-                if (newHeight > 100 && newHeight < 250 && newWeight > 20 && newWeight < 300) {
+                int newAge = Integer.parseInt(ageInput.getText().toString());
+
+                boolean needRestart = false;
+
+                if (newHeight > 100 && newHeight < 250) {
                     height = newHeight;
-                    weight = newWeight;
-                    prefs.edit()
-                            .putFloat("height", (float) height)
-                            .putFloat("weight", (float) weight)
-                            .apply();
-                    updateUI();
-                    Toast.makeText(this, "Профиль обновлен!", Toast.LENGTH_SHORT).show();
+                    prefs.edit().putFloat("height", (float) height).apply();
+                } else {
+                    Toast.makeText(this, "Некорректный рост (100-250 см)", Toast.LENGTH_SHORT).show();
+                    return;
                 }
+
+                if (newWeight > 20 && newWeight < 300) {
+                    weight = newWeight;
+                    prefs.edit().putFloat("weight", (float) weight).apply();
+                } else {
+                    Toast.makeText(this, "Некорректный вес (20-300 кг)", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (newAge >= 10 && newAge <= 120) {
+                    age = newAge;
+                    prefs.edit().putInt("age", age).apply();
+                } else {
+                    Toast.makeText(this, "Некорректный возраст (10-120 лет)", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                updateUI();
+                Toast.makeText(this, "Профиль обновлен!", Toast.LENGTH_SHORT).show();
+
             } catch (Exception ex) {
                 Toast.makeText(this, "Ошибка ввода", Toast.LENGTH_SHORT).show();
             }

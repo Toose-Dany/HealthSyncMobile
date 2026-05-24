@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public class RegisterActivity extends AppCompatActivity {
 
     private EditText nameInput, emailInput, passwordInput, confirmPasswordInput;
-    private EditText heightInput, weightInput;
+    private EditText heightInput, weightInput, ageInput;
     private Button registerButton;
     private TextView loginLink;
     private SharedPreferences prefs;
@@ -35,6 +35,7 @@ public class RegisterActivity extends AppCompatActivity {
         confirmPasswordInput = findViewById(R.id.registerConfirmPasswordInput);
         heightInput = findViewById(R.id.registerHeightInput);
         weightInput = findViewById(R.id.registerWeightInput);
+        ageInput = findViewById(R.id.registerAgeInput);
         registerButton = findViewById(R.id.registerButton);
         loginLink = findViewById(R.id.loginLink);
     }
@@ -54,6 +55,7 @@ public class RegisterActivity extends AppCompatActivity {
         String confirmPassword = confirmPasswordInput.getText().toString();
         String heightStr = heightInput.getText().toString().trim();
         String weightStr = weightInput.getText().toString().trim();
+        String ageStr = ageInput.getText().toString().trim();
 
         if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Заполните обязательные поля", Toast.LENGTH_SHORT).show();
@@ -70,29 +72,43 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        // Сохраняем данные пользователя
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("userName", name);
         editor.putString("userEmail", email);
         editor.putString("userPassword", password);
         editor.putBoolean("isLoggedIn", true);
 
-        // Сохраняем рост и вес, если указаны
+        // Сохраняем рост
         if (!heightStr.isEmpty()) {
             try {
-                editor.putFloat("height", Float.parseFloat(heightStr));
+                float height = Float.parseFloat(heightStr);
+                if (height >= 100 && height <= 250) {
+                    editor.putFloat("height", height);
+                }
             } catch (NumberFormatException e) {}
         }
+
+        // Сохраняем вес
         if (!weightStr.isEmpty()) {
             try {
-                editor.putFloat("weight", Float.parseFloat(weightStr));
+                float weight = Float.parseFloat(weightStr);
+                if (weight >= 20 && weight <= 300) {
+                    editor.putFloat("weight", weight);
+                }
+            } catch (NumberFormatException e) {}
+        }
+
+        // Сохраняем возраст
+        if (!ageStr.isEmpty()) {
+            try {
+                int age = Integer.parseInt(ageStr);
+                if (age >= 10 && age <= 120) {
+                    editor.putInt("age", age);
+                }
             } catch (NumberFormatException e) {}
         }
 
         editor.apply();
-
-        // Для отладки
-        android.util.Log.d("REGISTER", "Сохранено: " + email + "/" + password);
 
         Toast.makeText(this, "Регистрация успешна!", Toast.LENGTH_SHORT).show();
         startActivity(new Intent(this, MainActivity.class));
